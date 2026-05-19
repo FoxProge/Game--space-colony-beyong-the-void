@@ -3,14 +3,28 @@ using System.Numerics;
 
 namespace Space_colony_game.UI
 {
+    /// <summary>
+    /// Визуальная карточка уровня на экране выбора уровня.
+    /// Содержит прямоугольник, цвета, подписи и логику отрисовки / проверки ввода.
+    /// </summary>
     public class LevelCard
     {
+        /// <summary>Прямоугольник карточки на экране.</summary>
         public Rectangle Body {  get; set; }
+
+        /// <summary>Фоновый цвет карточки.</summary>
         public Color BackgroundColor { get; set; }
+
+        /// <summary>Заголовок карточки (название уровня).</summary>
         public string Label { get; set; }
+
+        /// <summary>Краткое описание уровня.</summary>
         public string Description { get; set; }
+
+        /// <summary>Признак, что карточка выбрана.</summary>
         public bool IsSelected { get; set; } = false;
 
+        /// <summary>Создаёт карточку уровня с указанными параметрами.</summary>
         public LevelCard(
             float x, float y,
             float width, float height,
@@ -24,6 +38,7 @@ namespace Space_colony_game.UI
             Description = descText;
         }
 
+        /// <summary>Рисует карточку: фон, рамку, подписи и метку «ВЫБРАНО», если карточка активна.</summary>
         public void Draw()
         {
             int left = (int)MathF.Round(Body.X);
@@ -76,12 +91,16 @@ namespace Space_colony_game.UI
             }
         }
 
+        /// <summary>Проверяет, наведён ли курсор мыши на карточку.</summary>
+        /// <returns>True, если курсор находится внутри Body.</returns>
         public bool IsHovered()
         {
             Vector2 mouse = Raylib.GetMousePosition();
             return Raylib.CheckCollisionPointRec(mouse, Body);
         }
 
+        /// <summary>Проверяет, была ли нажата левая кнопка мыши при наведении на карточку.</summary>
+        /// <returns>True, если карточка нажата в текущем кадре.</returns>
         public bool IsPressed()
         {
             return (IsHovered() && Raylib.IsMouseButtonPressed(MouseButton.Left));

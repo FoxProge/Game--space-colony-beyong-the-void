@@ -3,6 +3,10 @@ using Space_colony_game.Core;
 
 namespace Space_colony_game.UI.Panels
 {
+    /// <summary>
+    /// Быстрая панель с кнопками открытия панелей специалистов (Инженер, Учёный, Логист).
+    /// Размещает иконки-кнопки по центру панели и управляет их стилем.
+    /// </summary>
     public class QuickPanel : Panel
     {
         private static readonly string[] SpecLabels =
@@ -19,17 +23,30 @@ namespace Space_colony_game.UI.Panels
             Assets.Assets.LogistColor,
         };
 
+        /// <inheritdoc/>
         public override Rectangle Body { get; set; }
+
+        /// <inheritdoc/>
         public override Color BackgroundColor { get; set; }
+
+        /// <inheritdoc/>
         public override Color BorderColor { get; set; }
+
+        /// <inheritdoc/>
         public override float BorderThickness { get; set; }
 
+        /// <summary>Кнопка открытия панели инженера.</summary>
         public Button BtnOpenEngineer { get; }
+
+        /// <summary>Кнопка открытия панели учёного.</summary>
         public Button BtnOpenScientist { get; }
+
+        /// <summary>Кнопка открытия панели логиста.</summary>
         public Button BtnOpenLogistics { get; }
 
         private readonly Button[] _buttons;
 
+        /// <summary>Создаёт QuickPanel с заданными размерами и инициализирует кнопки.</summary>
         public QuickPanel(float x, float y, float width, float height)
         {
             Body = new Rectangle(x, y, width, height);
@@ -75,6 +92,7 @@ namespace Space_colony_game.UI.Panels
             UpdateLayout();
         }
 
+        /// <summary>Настраивает цвета и стиль всех кнопок панели.</summary>
         private void ConfigureButtons()
         {
             for (int i = 0; i < _buttons.Length; i++)
@@ -92,6 +110,7 @@ namespace Space_colony_game.UI.Panels
             }
         }
 
+        /// <summary>Вычисляет и устанавливает расположение кнопок внутри панели.</summary>
         private void UpdateLayout()
         {
             float spacing = Game.ScaleF(5);
@@ -125,6 +144,7 @@ namespace Space_colony_game.UI.Panels
             }
         }
 
+        /// <summary>Рисует панель и все кнопки на ней.</summary>
         public override void Draw()
         {
             UpdateLayout();

@@ -5,21 +5,38 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Panels
 {
+    /// <summary>
+    /// Мини-карта — отображает уменьшенную карту мира, здания и текущую видимую область камеры.
+    /// Поддерживает перетаскивание кликом по мини-карте для навигации камеры.
+    /// </summary>
     public class MiniMap : Panel
     {
+        /// <inheritdoc/>
         public override Rectangle Body { get; set; }
+
+        /// <inheritdoc/>
         public override Color BackgroundColor { get; set; }
+
+        /// <inheritdoc/>
         public override Color BorderColor { get; set; }
+
+        /// <inheritdoc/>
         public override float BorderThickness { get; set; }
+
+        /// <summary>Цвет заливки прямоугольника видимой области камеры на мини-карте.</summary>
         public Color ViewportColor { get; set; }
+
+        /// <summary>Цвет рамки прямоугольника видимой области камеры на мини-карте.</summary>
         public Color ViewportBorder { get; set; }
 
         private readonly Camera camera_;
 
+        /// <summary>Опциональная ссылка на менеджер построек — используется для отрисовки зданий на мини-карте.</summary>
         public BuildingManager? Buildings { get; set; }
 
         private bool isDragging_ = false;
 
+        /// <summary>Создаёт мини-карту с указанными размерами и привязкой к камере.</summary>
         public MiniMap(float x, float y, float width, float height, Camera camera)
         {
             camera_ = camera;
@@ -31,6 +48,10 @@ namespace Space_colony_game.UI.Panels
             BorderThickness = 3f;
         }
 
+        /// <summary>
+        /// Обновляет состояние мини-карты — обрабатывает клики и перетаскивание для перемещения камеры.
+        /// Должен вызываться каждый кадр перед отрисовкой.
+        /// </summary>
         public void Update()
         {
             Vector2 mouse = Raylib.GetMousePosition();
@@ -49,6 +70,7 @@ namespace Space_colony_game.UI.Panels
                 NavigateTo(mouse);
         }
 
+        /// <summary>Рисует мини-карту: фон, тайлы, здания и прямоугольник области просмотра.</summary>
         public override void Draw()
         {
             Raylib.DrawRectangleRec(Body, BackgroundColor);
@@ -58,6 +80,7 @@ namespace Space_colony_game.UI.Panels
             Raylib.DrawRectangleLinesEx(Body, BorderThickness, BorderColor);
         }
 
+        /// <summary>Рисует представление зданий на мини-карте, если установлен <see cref="Buildings"/>.</summary>
         private void DrawBuildingsMini()
         {
             if (Buildings == null) return;
@@ -89,6 +112,7 @@ namespace Space_colony_game.UI.Panels
             }
         }
 
+        /// <summary>Рисует прямоугольник, соответствующий текущему просмотру камеры.</summary>
         private void DrawViewportRect()
         {
             float scaleX = Body.Width / WorldMap.WorldWidth;
@@ -127,6 +151,7 @@ namespace Space_colony_game.UI.Panels
             Raylib.DrawRectangleLinesEx(vr, 1f, ViewportBorder);
         }
 
+        /// <summary>Рисует миниатюрное представление тайлов карты внутри мини-карты.</summary>
         private void DrawMiniTile()
         {
             float cellW = Body.Width / WorldMap.Columns;
@@ -150,6 +175,9 @@ namespace Space_colony_game.UI.Panels
             }
         }
 
+        /// <summary>
+        /// Переводит координату экрана в нормализованные координаты мини-карты и центрирует камеру на соответствующую мировую позицию.
+        /// </summary>
         private void NavigateTo(Vector2 screenPoint)
         {
             float nx = (screenPoint.X - Body.X) / Body.Width;

@@ -5,6 +5,10 @@ using System.Numerics;
 
 namespace Space_colony_game.Systems
 {
+    /// <summary>
+    /// Менеджер построек: хранит и управляет всеми зданиями на карте,
+    /// проверяет возможность размещения, создаёт экземпляры зданий и выполняет дневную обработку.
+    /// </summary>
     public class BuildingManager
     {
         private readonly WorldMap map_;
@@ -12,15 +16,22 @@ namespace Space_colony_game.Systems
         private readonly List<Building> buildings_ = [];
         private int nextId_ = 1;
 
+        /// <summary>Список всех построек (только для чтения).</summary>
         public IReadOnlyList<Building> Buildings => buildings_;
+
+        /// <summary>Текущее выбранное здание (если есть).</summary>
         public Building? Selected { get; private set; } = null;
 
+        /// <summary>Создаёт менеджер построек, привязанный к карте и колонии.</summary>
+        /// <param name="map">Карта мира, используемая для проверок размещения.</param>
+        /// <param name="colony">Объект колонии, для списания ресурсов и передачи событий.</param>
         public BuildingManager(WorldMap map, Colony colony)
         {
             map_ = map;
             colony_ = colony;
         }
 
+        /// <summary>Создаёт и размещает основной корабль (MotherShip) в центре карты.</summary>
         public MotherShip SpawnMotherShip()
         {
             int col = WorldMap.Columns / 2 - MotherShip.Size / 2;
@@ -32,6 +43,7 @@ namespace Space_colony_game.Systems
 
         private static readonly Random rand_ = new();
 
+        /// <summary>Обрабатывает один игровой день: питание населения, подачу энергии и производство зданий.</summary>
         public void ProcessDay()
         {
             var weather = colony_.WeatherSys.Forecast.Count > 0
@@ -79,6 +91,13 @@ namespace Space_colony_game.Systems
             }
         }
 
+        /// <summary>
+        /// Проверяет, можно ли разместить здание указанного типа в заданной клетке.
+        /// Возвращает текст ошибки или null при успешной проверке.
+        /// </summary>
+        /// <param name="type">Тип здания для размещения.</param>
+        /// <param name="col">Колонка карты (x) в тайлах.</param>
+        /// <param name="row">Строка карты (y) в тайлах.</param>
         public string? CanPlace(BuildingType type, int col, int row)
         {
             if (col < 0 || row < 0 || col + type.SizeX > WorldMap.Columns || row + type.SizeY > WorldMap.Rows)
@@ -105,6 +124,10 @@ namespace Space_colony_game.Systems
             return null;
         }
 
+        /// <summary>Размещает здание указанного типа, списывает стоимость металла и возвращает созданный объект.</summary>
+        /// <param name="type">Тип строения.</param>
+        /// <param name="col">Колонка карты для размещения.</param>
+        /// <param name="row">Строка карты для размещения.</param>
         public Building Place(BuildingType type, int col, int row)
         {
             colony_.Metal.Value -= type.CostMetal;
@@ -132,6 +155,7 @@ namespace Space_colony_game.Systems
             return building;
         }
 
+        /// <summary>Пытается удалить здание по идентификатору. Возвращает true при успешном удалении.</summary>
         public bool TryDestroy(int buildingId)
         {
             Building? building = buildings_.FirstOrDefault(b => b.Id == buildingId);
@@ -143,6 +167,7 @@ namespace Space_colony_game.Systems
             return true;
         }
 
+        /// <summary>Возвращает здание, расположенное по мировым координатам (в пикселях), либо null.</summary>
         public Building? GetAt(float worldX, float worldY)
         {
             int col = (int)(worldX / WorldMap.TileSize);
@@ -164,6 +189,9 @@ namespace Space_colony_game.Systems
             return null;
         }
 
+        /// <summary>Обрабатывает клик по мировым координатам: выбирает здание или возвращает найденный объект.</summary>
+        /// <param name="worldPos">Мировая позиция клика (в пикселях).</param>
+        /// <param name="rightClick">Признак правого клика (не приводит к выделению при true).</param>
         public Building? HandleClick(Vector2 worldPos, bool rightClick)
         {
             int col = (int)(worldPos.X / WorldMap.TileSize);
@@ -184,6 +212,7 @@ namespace Space_colony_game.Systems
             return null;
         }
 
+        /// <summary>Рисует все здания и рамку выделенного объекта (если есть).</summary>
         public void Draw(Camera camera)
         {
             foreach (var b in buildings_)
@@ -238,7 +267,7 @@ namespace Space_colony_game.Systems
             );
         }
 
-
+        /// <summary>Проверяет наличие фундамента в указанной клетке.</summary>
         public bool HasFoundationAt(int c, int r)
         {
             foreach (var b in buildings_)

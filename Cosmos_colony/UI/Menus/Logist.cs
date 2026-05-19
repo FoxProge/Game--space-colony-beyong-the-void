@@ -4,10 +4,14 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Menus
 {
+    /// <summary>
+    /// Окно логиста — позволяет заказывать колонистов за еду, отслеживать заказы и управлять ожиданием доставки.
+    /// </summary>
     public class Logist
     {
         private readonly Colony _colony;
 
+        /// <summary>Признак открытия панели.</summary>
         public bool IsOpen { get; private set; } = false;
 
         private const int PanelW = 520;
@@ -20,6 +24,7 @@ namespace Space_colony_game.UI.Menus
         private const int MaxOrder = 20;
         private const int FoodPerColonist = 5;
 
+        /// <summary>Список отправленных заказов: (кол-во, дней в пути).</summary>
         private readonly List<(int Amount, int DaysLeft)> _inTransit = new();
         private const int DeliveryDays = 3;
 
@@ -41,14 +46,22 @@ namespace Space_colony_game.UI.Menus
         private static readonly Color BtnArrowHov = new(60, 90, 140, 255);
         private static readonly Color InTransitBg = new(15, 25, 40, 255);
 
+        /// <summary>Создаёт экземпляр логиста и связывает его с колонией.</summary>
         public Logist(Colony colony)
         {
             _colony = colony;
         }
 
+        /// <summary>Открывает окно логиста.</summary>
         public void Open() => IsOpen = true;
+
+        /// <summary>Закрывает окно логиста.</summary>
         public void Close() => IsOpen = false;
 
+        /// <summary>
+        /// Обрабатывает переход дня: уменьшает оставшееся время у заказов и доставляет пришедших колонистов.
+        /// Также обновляет таймер сообщения.
+        /// </summary>
         public void OnDayPassed()
         {
             for (int i = _inTransit.Count - 1; i >= 0; i--)
@@ -70,6 +83,7 @@ namespace Space_colony_game.UI.Menus
                 _messageTimer -= 1f;
         }
 
+        /// <summary>Обрабатывает ввод и взаимодействие внутри панели (клики по кнопкам).</summary>
         public void Update()
         {
             if (!IsOpen) return;
@@ -113,6 +127,7 @@ namespace Space_colony_game.UI.Menus
                 Close();
         }
 
+        /// <summary>Рисует окно логиста с информацией, секцией заказа и списком в пути.</summary>
         public void Draw()
         {
             if (!IsOpen) return;
@@ -301,6 +316,7 @@ namespace Space_colony_game.UI.Menus
                 size, 1, color);
         }
 
+        /// <summary>Показывает временное сообщение внизу панели.</summary>
         private void ShowMessage(string msg)
         {
             _lastMessage = msg;

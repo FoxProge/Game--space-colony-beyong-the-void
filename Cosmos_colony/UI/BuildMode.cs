@@ -6,26 +6,37 @@ using System.Numerics;
 
 namespace Space_colony_game.UI
 {
+    /// <summary>
+    /// Управляет режимом строительства: отображение "призрака" здания, проверка возможности размещения и фактическая постановка здания.
+    /// </summary>
     public class BuildMode
     {
         private readonly BuildingManager manager_;
         private readonly Camera camera_;
 
+        /// <summary>Признак активности режима постройки.</summary>
         public bool IsActive { get; private set; } = false;
+
+        /// <summary>Тип текущего "призрака" для размещения.</summary>
         public BuildingType? GhostType { get; private set; } = null;
 
         private bool justActivated_ = false;
+
+        /// <summary>Колбек, вызываемый после успешного размещения здания. Передаётся созданный объект Building.</summary>
         public Action<Building>? OnPlace { get; set; }
 
         private int ghostCol_ = 0;
         private int ghostRow_ = 0;
 
+        /// <summary>Создаёт режим постройки, привязанный к менеджеру построек и камере.</summary>
         public BuildMode(BuildingManager manager, Camera camera)
         {
             manager_ = manager;
             camera_ = camera;
         }
 
+        /// <summary>Активирует режим постройки для заданного типа здания.</summary>
+        /// <param name="type">Тип здания, который будет показан в виде "призрака".</param>
         public void Activate(BuildingType type)
         {
             GhostType = type;
@@ -33,12 +44,17 @@ namespace Space_colony_game.UI
             justActivated_ = true;
         }
 
+        /// <summary>Деактивирует режим постройки.</summary>
         public void Deactivate()
         {
             IsActive = false;
             GhostType = null;
         }
 
+        /// <summary>
+        /// Обновляет состояние режима постройки: вычисляет позицию "призрака", обрабатывает отмену правой кнопкой
+        /// и попытку размещения левой кнопкой мыши.
+        /// </summary>
         public void Update()
         {
             if (!IsActive || GhostType == null) return;
@@ -50,6 +66,7 @@ namespace Space_colony_game.UI
 
             if (justActivated_)
             {
+                // пропускаем первый кадр после активации, чтобы избежать мгновенного клика
                 justActivated_ = false;
                 return;
             }
@@ -71,6 +88,9 @@ namespace Space_colony_game.UI
             }
         }
 
+        /// <summary>
+        /// Рисует "призрак" здания в текущей позиции с индикацией возможности размещения и выводом сообщения об ошибке.
+        /// </summary>
         public void Draw()
         {
             if (!IsActive || GhostType == null) return;

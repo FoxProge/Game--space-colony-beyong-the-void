@@ -4,21 +4,35 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Panels
 {
+    /// <summary>
+    /// Панель отображения целей уровня: текущее прогресс-значение и требуемые цели для победы.
+    /// </summary>
     public class ObjectivesPanel : Panel
     {
         private readonly Colony colony_;
         private readonly int[] winCondition_;
         private readonly int loseCondition_;
 
+        /// <inheritdoc/>
         public override Rectangle Body { get; set; }
 
+        /// <inheritdoc/>
         public override Color BackgroundColor { get; set; } = new Color(20, 25, 35, 220);
 
+        /// <inheritdoc/>
         public override Color BorderColor { get; set; } = new Color(70, 90, 120, 255);
 
+        /// <inheritdoc/>
         public override float BorderThickness { get; set; } = 2f;
 
-        public ObjectivesPanel( Colony colony, int[] winCondition,
+        /// <summary>
+        /// Создаёт панель целей.
+        /// </summary>
+        /// <param name="colony">Колония — источник значений ресурсов.</param>
+        /// <param name="winCondition">Массив требований для победы: [еда, металл, люди].</param>
+        /// <param name="loseCondition">День, к которому требуется выполнить цели (поражение после достижения).</param>
+        /// <param name="body">Прямоугольник панели на экране.</param>
+        public ObjectivesPanel(Colony colony, int[] winCondition,
             int loseCondition, Rectangle body)
         {
             colony_ = colony;
@@ -27,6 +41,7 @@ namespace Space_colony_game.UI.Panels
             Body = body;
         }
 
+        /// <summary>Рисует панель с заголовком и списком целей с прогрессом.</summary>
         public override void Draw()
         {
             DrawBackground();
@@ -83,7 +98,7 @@ namespace Space_colony_game.UI.Panels
             );
         }
 
-        private void DrawObjective( string text, int current,
+        private void DrawObjective(string text, int current,
             int required, int offsetY)
         {
             bool completed = current >= required;

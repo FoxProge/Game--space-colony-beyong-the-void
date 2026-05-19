@@ -4,25 +4,53 @@ using Space_colony_game.Screens;
 
 namespace Space_colony_game.Core
 {
+    /// <summary>
+    /// Главный класс игры.
+    /// Отвечает за инициализацию окна, игровой цикл и завершение приложения.
+    /// Управляет ScreenManager и глобальными настройками.
+    /// </summary>
     public class Game
     {
+        /// <summary>Ширина окна игры в пикселях.</summary>
         public static int ScreenWidth { get; private set; } = 1280;
+
+        /// <summary>Высота окна игры в пикселях.</summary>
         public static int ScreenHeight { get; private set; } = 720;
 
+        /// <summary>Целевой FPS игры.</summary>
         public const int TargetFPS = 60;
+
+        /// <summary>Заголовок окна игры.</summary>
         public const string Title = "Space colony Beyond the Void";
 
+        /// <summary>Флаг выхода из игры (используется для принудительного завершения цикла).</summary>
         public static bool ShouldExit { get; set; } = false;
 
         private readonly ScreenManager screenManager_ = new();
 
+        /// <summary>
+        /// Коэффициент масштабирования относительно базового разрешения 720p.
+        /// Используется для адаптивного UI.
+        /// </summary>
         private static float Scale_ => ScreenHeight / 720f;
-        public static float ScaleF(float value) => value * Scale_;
-        public static int ScaleInt(float value) => (int)ScaleF(value);
-        public static float ScaleFontSmallSize => Assets.Assets.FontSmallSize * ScaleF(1);
-        public static float ScaleFontMediumSize => Assets.Assets.FontMediumSize * ScaleF(1);
-        public static float ScaleFontLargeSize => Assets.Assets.FontLargeSize * ScaleF(1);
 
+        /// <summary>
+        /// Масштабирует float значение под текущее разрешение экрана.
+        /// </summary>
+        /// <param name="value">Базовое значение.</param>
+        /// <returns>Масштабированное значение.</returns>
+        public static float ScaleF(float value) => value * Scale_;
+
+        /// <summary>
+        /// Масштабирует значение и приводит к int (для пикселей UI).
+        /// </summary>
+        /// <param name="value">Базовое значение.</param>
+        /// <returns>Масштабированное целочисленное значение.</returns>
+        public static int ScaleInt(float value) => (int)ScaleF(value);
+
+        /// <summary>
+        /// Запускает игру: инициализация -> игровой цикл -> завершение.
+        /// </summary>
         public void Run()
         {
             Init();
@@ -30,6 +58,9 @@ namespace Space_colony_game.Core
             Shutdown();
         }
 
+        /// <summary>
+        /// Инициализация окна, настроек, ассетов и стартовой сцены.
+        /// </summary>
         private void Init()
         {
             GameSettings.Load();
@@ -59,6 +90,10 @@ namespace Space_colony_game.Core
             screenManager_.GoTo(new MainMenuScreen(screenManager_));
         }
 
+        /// <summary>
+        /// Основной игровой цикл.
+        /// Обрабатывает обновление и отрисовку текущего экрана.
+        /// </summary>
         private void Loop()
         {
             while(!Raylib.WindowShouldClose() && !ShouldExit)
@@ -73,6 +108,9 @@ namespace Space_colony_game.Core
             }
         }
 
+        /// <summary>
+        /// Завершение работы игры: сохранение данных, выгрузка ресурсов, закрытие окна.
+        /// </summary>
         private void Shutdown()
         {
             GameSettings.Save();

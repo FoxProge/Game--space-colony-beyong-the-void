@@ -5,19 +5,29 @@ using Space_colony_game.UI;
 
 namespace Space_colony_game.Screens
 {
+    /// <summary>
+    /// Экран выбора уровня — отображает карточки уровней, иконки планет и кнопки управления (назад/начать).
+    /// </summary>
     public class SelectLevelScreen : IScreen
     {
+        /// <summary>Менеджер экранов для переходов между экранами.</summary>
         private readonly ScreenManager screenManager_;
+
+        /// <summary>Кнопка возврата в главное меню.</summary>
         private readonly Button btnBack_ = new(
             Game.ScreenWidth / 2 - 340,
             Game.ScreenHeight - Game.ScaleInt(110),
             180, 50, "Назад"
         );
+
+        /// <summary>Кнопка старта выбранного уровня.</summary>
         private readonly Button btnStart_ = new(
             Game.ScreenWidth / 2 + 160,
             Game.ScreenHeight - Game.ScaleInt(110),
             180, 50, "Начать"
         );
+
+        /// <summary>Карточка первого уровня (Марс).</summary>
         private readonly LevelCard level_1_ = new(
             Game.ScreenWidth / 2 - 340,
             Game.ScaleInt(200), 300, 360,
@@ -25,6 +35,8 @@ namespace Space_colony_game.Screens
             "Марс",
             "\nНормальная сложность"
         );
+
+        /// <summary>Карточка второго уровня (Титан).</summary>
         private readonly LevelCard level_2_ = new(
             Game.ScreenWidth / 2 + 40,
             Game.ScaleInt(200), 300, 360,
@@ -33,15 +45,24 @@ namespace Space_colony_game.Screens
             "\nПовышенная сложность"
         );
 
+        /// <summary>
+        /// Создаёт экран выбора уровня.
+        /// </summary>
+        /// <param name="screenManager">Менеджер экранов, используемый для навигации.</param>
         public SelectLevelScreen(ScreenManager screenManager)
         {
             screenManager_ = screenManager;
         }
 
+        /// <summary>Вызывается при входе на экран (не используется в текущей реализации).</summary>
         public void OnEnter() { }
 
+        /// <summary>Вызывается при выходе с экрана (не используется в текущей реализации).</summary>
         public void OnExit() { }
 
+        /// <summary>
+        /// Обрабатывает ввод пользователя: выбор карточек уровней и нажатия кнопок.
+        /// </summary>
         public void Update()
         {
             if (!Raylib.IsMouseButtonPressed(MouseButton.Left)) return;
@@ -69,6 +90,7 @@ namespace Space_colony_game.Screens
             }
         }
 
+        /// <summary>Рисует экран: фон, заголовок, карточки уровней, иконки планет и кнопки.</summary>
         public void Draw()
         {
             DrawBgImage();
@@ -80,6 +102,7 @@ namespace Space_colony_game.Screens
             btnStart_.Draw();
         }
 
+        /// <summary>Рисует фоновое изображение экрана, если оно загружено в ассетах.</summary>
         public void DrawBgImage()
         {
             if (Assets.Assets.BackgroundScreenImage == null) return;
@@ -96,6 +119,8 @@ namespace Space_colony_game.Screens
                 new Color(120, 120, 120, 255)
             );
         }
+
+        /// <summary>Рисует заголовок экрана выбора уровня по центру.</summary>
         private void DrawTitle()
         {
             const string text = "Выбор уровня";
@@ -111,6 +136,9 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>
+        /// Рисует иконки планет внутри карточек уровней, если соответствующие текстуры загружены.
+        /// </summary>
         private void DrawPlanetsIcons()
         {
             float imgSize = 200f;

@@ -5,22 +5,53 @@ using System.Numerics;
 
 namespace Space_colony_game.Systems
 {
+    /// <summary>
+    /// Менеджер выделения объектов на карте.
+    /// Обрабатывает клики мыши — выбор зданий левой кнопкой и контекстные правые клики по кораблю/зданиям.
+    /// Предоставляет событие для обработки правого клика по MotherShip и по другим зданиям.
+    /// </summary>
     public class SelectionManager
     {
         private readonly BuildingManager buildings_;
         private readonly Camera camera_;
         private float selTimer_ = 0f;
+
+        /// <summary>
+        /// Текущее выбранное здание или <c>null</c>, если ничего не выбрано.
+        /// </summary>
         public Building? Selected { get; private set; } = null;
+
+        /// <summary>
+        /// Вызывается при правом клике по MotherShip; передаются экранные координаты клика.
+        /// </summary>
         public Action<Vector2>? OnMotherShipRightClick { get; set; }
+
+        /// <summary>
+        /// Вызывается при правом клике по зданию (не по фундаменту); передаются объект здания и экранные координаты клика.
+        /// </summary>
         public Action<Building, Vector2>? OnBuildingRightClick { get; set; }
+
+        /// <summary>
+        /// Снимает выделение с текущего объекта.
+        /// </summary>
         public void Deselect() => Selected = null;
 
+        /// <summary>
+        /// Создаёт менеджер выделения.
+        /// </summary>
+        /// <param name="buildings">Менеджер построек (источник объектов для выбора).</param>
+        /// <param name="camera">Камера для преобразования координат экрана/мира.</param>
         public SelectionManager(BuildingManager buildings, Camera camera)
         {
             buildings_ = buildings;
             camera_ = camera;
         }
 
+        /// <summary>
+        /// Обрабатывает ввод мыши:
+        /// - при нажатии ЛКМ выполняет выбор здания под курсором (устанавливает <see cref="Selected"/> и запускает анимацию подсветки);
+        /// - при нажатии ПКМ вызывает соответствующее событие (<see cref="OnMotherShipRightClick"/> или <see cref="OnBuildingRightClick"/>).
+        /// </summary>
         public void Update()
         {
             var mouse = Raylib.GetMousePosition();
@@ -57,6 +88,10 @@ namespace Space_colony_game.Systems
                 selTimer_ += Raylib.GetFrameTime();
         }
 
+        /// <summary>
+        /// Рисует подсветку выбранного здания: рамку и угловые маркеры с пульсацией.
+        /// Ничего не делает, если <see cref="Selected"/> равен <c>null</c>.
+        /// </summary>
         public void Draw()
         {
             if (Selected == null) return;
@@ -89,6 +124,15 @@ namespace Space_colony_game.Systems
             DrawCorner(right + 5, bottom + 5, cornerLen, -1, -1, color);
         }
 
+        /// <summary>
+        /// Рисует угловой маркер — две линии, исходящие из точки.
+        /// </summary>
+        /// <param name="x">X-координата опорной точки в пикселях.</param>
+        /// <param name="y">Y-координата опорной точки в пикселях.</param>
+        /// <param name="len">Длина каждой линии маркера в пикселях.</param>
+        /// <param name="dx">Направление по X (1 или -1).</param>
+        /// <param name="dy">Направление по Y (1 или -1).</param>
+        /// <param name="color">Цвет линий.</param>
         private static void DrawCorner(int x, int y, int len, int dx, int dy, Color color)
         {
             Raylib.DrawLineEx(new Vector2(x, y), new Vector2(x + dx * len, y), 2, color);

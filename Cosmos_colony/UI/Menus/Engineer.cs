@@ -5,11 +5,16 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Menus
 {
+    /// <summary>
+    /// Окно инженера — выбор и запуск режима строительства зданий.
+    /// Отображает список доступных типов зданий, их описание и стоимость.
+    /// </summary>
     public class Engineer
     {
         private readonly Colony colony_;
         private readonly BuildMode buildMode_;
 
+        /// <summary>Признак открытия панели инженера.</summary>
         public bool IsOpen { get; private set; } = false;
 
         private int selectedIdx_ = 0;
@@ -36,23 +41,27 @@ namespace Space_colony_game.UI.Menus
         private static readonly Color CanAfford = new(60, 184, 122, 255);
         private static readonly Color CantAfford = new(224, 80, 80, 255);
 
+        /// <summary>Создаёт окно инженера с привязкой к колонии и режиму постройки.</summary>
         public Engineer(Colony colony, BuildMode buildMode)
         {
             colony_ = colony;
             buildMode_ = buildMode;
         }
 
+        /// <summary>Открывает панель инженера и сбрасывает выбор.</summary>
         public void Open()
         {
             IsOpen = true;
             selectedIdx_ = 0;
         }
 
+        /// <summary>Закрывает панель инженера.</summary>
         public void Close()
         {
             IsOpen = false;
         }
 
+        /// <summary>Обрабатывает ввод пользователя: выбор в списке, нажатие кнопки «Построить» и закрытие.</summary>
         public void Update()
         {
             if (!IsOpen) return;
@@ -96,6 +105,7 @@ namespace Space_colony_game.UI.Menus
             }
         }
 
+        /// <summary>Рисует окно инженера с заголовком, списком и деталями выбранного типа.</summary>
         public void Draw()
         {
             if (!IsOpen) return;
@@ -165,7 +175,7 @@ namespace Space_colony_game.UI.Menus
                 var type = BuildingType.All[i];
                 var itemRect = GetListItemRect(i);
 
-                
+
                 float x = MathF.Round(itemRect.X);
                 float y = MathF.Round(itemRect.Y);
                 float w = MathF.Round(itemRect.Width);

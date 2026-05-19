@@ -4,15 +4,27 @@ using System.Numerics;
 
 namespace Space_colony_game.World.Buildings
 {
+    /// <summary>
+    /// Базовый класс для всех игровых построек. Отвечает за отрисовку тела здания и служебные свойства.
+    /// </summary>
     public abstract class Building : Entity 
     {
+        /// <summary>Описание типа здания. Ожидается, что значение будет установлено для валидного экземпляра.</summary>
         public BuildingType? Type { get; init; } = null;
+
+        /// <summary>Текущее здоровье/цельность здания (0..100).</summary>
         public int Health { get; set; } = 100;
+
+        /// <summary>Флаг, можно ли уничтожить здание (например, базовый корабль — нельзя).</summary>
         public virtual bool CanBeDestroyed => true;
 
+        /// <summary>Ширина в тайлах (берётся из <see cref="Type"/>).</summary>
         public int SizeX => Type.SizeX;
+
+        /// <summary>Высота в тайлах (берётся из <see cref="Type"/>).</summary>
         public int SizeY => Type.SizeY;
 
+        /// <summary>Прямоугольник в мировых координатах (в пикселях), занимаемый зданием.</summary>
         public Rectangle WorldRec => new(
             Col * WorldMap.TileSize,
             Row * WorldMap.TileSize,
@@ -20,6 +32,7 @@ namespace Space_colony_game.World.Buildings
             SizeY * WorldMap.TileSize
         );
 
+        /// <summary>Рисует здание с учётом камеры: вычисляет экранные координаты и вызывает <see cref="DrawBody"/>.</summary>
         public override void Draw(Camera camera)
         {
             float wx = Col * WorldMap.TileSize;
@@ -68,6 +81,15 @@ namespace Space_colony_game.World.Buildings
                     Assets.Assets.FontSmallSize * 0.75f, 1, Color.White);
         }
 
+        /// <summary>
+        /// Вспомогательная отрисовка текстуры или fallback-цвета, если текстуры нет.
+        /// </summary>
+        /// <param name="tex">Опциональная текстура.</param>
+        /// <param name="x">Позиция X на экране (пиксели).</param>
+        /// <param name="y">Позиция Y на экране (пиксели).</param>
+        /// <param name="w">Ширина для отрисовки (пиксели).</param>
+        /// <param name="h">Высота для отрисовки (пиксели).</param>
+        /// <param name="fallback">Цвет-заполнитель при отсутствии текстуры.</param>
         protected static void DrawTextureOrFallback(
             Texture2D? tex, int x, int y, int w, int h, Color fallback)
         {
@@ -80,6 +102,13 @@ namespace Space_colony_game.World.Buildings
                 Raylib.DrawRectangle(x, y, w, h, fallback);
         }
 
+        /// <summary>
+        /// Отрисовать тело здания. Подклассы переопределяют для собственной визуализации.
+        /// </summary>
+        /// <param name="x">Экранная X-позиция (пиксели).</param>
+        /// <param name="y">Экранная Y-позиция (пиксели).</param>
+        /// <param name="w">Ширина в пикселях.</param>
+        /// <param name="h">Высота в пикселях.</param>
         public virtual void DrawBody(int x, int y, int w, int h)
         {
             var rect = new Rectangle(x, y, w, h);

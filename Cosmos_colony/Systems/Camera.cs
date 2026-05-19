@@ -4,6 +4,10 @@ using System.Numerics;
 
 namespace Space_colony_game.Systems
 {
+    /// <summary>
+    /// Камера, управляющая просмотром игрового мира: позиция, зум и методы преобразования координат.
+    /// Поддерживает скролл клавиатурой и мышью, перемещение к позиции и ограничение внутри границ карты.
+    /// </summary>
     public class Camera
     {
         private const float ScrollSpeed = 650f;
@@ -14,11 +18,23 @@ namespace Space_colony_game.Systems
         private const float ZoomMax = 2.0f;
         private const float ZoomDefault = 1.0f;
 
+        /// <summary>Позиция левого верхнего угла просмотра в мировых координатах (пиксели).</summary>
         public Vector2 Position { get; private set; } = Vector2.Zero;
+
+        /// <summary>Текущий коэффициент масштабирования (зум).</summary>
         public float Zoom { get; private set; } = ZoomDefault;
+
+        /// <summary>Ширина вьюпорта в пикселях (экранная ширина для камеры).</summary>
         public int ViewportWidth { get; set; }
+
+        /// <summary>Высота вьюпорта в пикселях (экранная высота для камеры).</summary>
         public int ViewportHeight { get; set; }
 
+        /// <summary>
+        /// Создаёт камеру с заданными размерами вьюпорта и центрирует её по центру карты.
+        /// </summary>
+        /// <param name="viewportWidth">Ширина вьюпорта в пикселях.</param>
+        /// <param name="viewportHeight">Высота вьюпорта в пикселях.</param>
         public Camera(int viewportWidth, int viewportHeight)
         {
             ViewportWidth = viewportWidth;
@@ -32,6 +48,12 @@ namespace Space_colony_game.Systems
             );
         }
 
+        /// <summary>
+        /// Обновляет состояние камеры: обработка клавиатурного скролла, скролла по краям экрана и масштабирования колесом мыши.
+        /// </summary>
+        /// <remarks>
+        /// При зуме камера сохраняет мировую позицию под курсором, чтобы зум выглядел «по месту».
+        /// </remarks>
         public void Update()
         {
             float dt = Raylib.GetFrameTime();
@@ -70,6 +92,9 @@ namespace Space_colony_game.Systems
             Move(delta);
         }
 
+        /// <summary>
+        /// Обновляет камеру, учитывая только клавиатурный ввод и скролл по краям (без обработки колеса мыши).
+        /// </summary>
         public void UpdateKeyboardOnly()
         {
             float dt = Raylib.GetFrameTime();
@@ -99,9 +124,17 @@ namespace Space_colony_game.Systems
             Move(delta);
         }
 
+        /// <summary>
+        /// Перемещает камеру на заданный вектор (в мировых пикселях) и ограничивает позицию границами карты.
+        /// </summary>
+        /// <param name="delta">Смещение в мировых пикселях.</param>
         public void Move(Vector2 delta)
             => Position = ClampPosition(Position + delta);
 
+        /// <summary>
+        /// Центрирует камеру на указанной мировой позиции.
+        /// </summary>
+        /// <param name="worldPos">Мировая позиция (в пикселях), на которую нужно центрироваться.</param>
         public void CenterOn(Vector2 worldPos)
         {
             Position = ClampPosition(worldPos - new Vector2(
@@ -109,12 +142,27 @@ namespace Space_colony_game.Systems
                 ViewportHeight / (2f * Zoom)));
         }
 
+        /// <summary>
+        /// Преобразует мировую позицию (пиксели) в экранные координаты с учётом позиции и зума камеры.
+        /// </summary>
+        /// <param name="world">Мировая координата (пиксели).</param>
+        /// <returns>Экранная координата в пикселях.</returns>
         public Vector2 WorldToScreen(Vector2 world)
             => (world - Position) * Zoom;
 
+        /// <summary>
+        /// Преобразует экранную позицию в мировые координаты (обратное к WorldToScreen).
+        /// </summary>
+        /// <param name="screen">Экранная координата (пиксели).</param>
+        /// <returns>Мировая координата в пикселях.</returns>
         public Vector2 ScreenToWorld(Vector2 screen)
             => screen / Zoom + Position;
 
+        /// <summary>
+        /// Ограничивает переданную позицию так, чтобы область просмотра камеры оставалась внутри границ карты.
+        /// </summary>
+        /// <param name="pos">Проверяемая мировая позиция левого верхнего угла просмотра.</param>
+        /// <returns>Скорректированная позиция, удовлетворяющая границам карты.</returns>
         private Vector2 ClampPosition(Vector2 pos)
         {
             float viewW = ViewportWidth / Zoom;

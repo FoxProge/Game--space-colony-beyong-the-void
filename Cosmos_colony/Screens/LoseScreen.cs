@@ -4,20 +4,36 @@ using System.Numerics;
 
 namespace Space_colony_game.Screens
 {
+    /// <summary>
+    /// Экран поражения. Показывает заголовок, статистику (сколько дней держалась колония)
+    /// и подсказку о возврате в главное меню по любому вводу.
+    /// </summary>
     public class LoseScreen : IScreen
     {
         private readonly ScreenManager screenManager_;
         private readonly int daysAlive_;
 
+        /// <summary>
+        /// Создаёт экран поражения.
+        /// </summary>
+        /// <param name="screenManager">Менеджер экранов — используется для перехода в главное меню.</param>
+        /// <param name="daysAlive">Число дней, которые продержалась колония до поражения.</param>
         public LoseScreen(ScreenManager screenManager, int daysAlive)
         {
             screenManager_ = screenManager;
             daysAlive_ = daysAlive;
         }
+
+        /// <summary>Вызывается при входе на экран (здесь не используется).</summary>
         public void OnEnter() { }
 
+        /// <summary>Вызывается при выходе с экрана (здесь не используется).</summary>
         public void OnExit() { }
 
+        /// <summary>
+        /// Обрабатывает ввод пользователя: любой клик мыши или нажатие клавиши
+        /// приводит к возврату в главное меню.
+        /// </summary>
         public void Update()
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left) ||
@@ -29,6 +45,7 @@ namespace Space_colony_game.Screens
             }
         }
 
+        /// <summary>Рисует экран: фон, заголовок, статистику и подсказку.</summary>
         public void Draw()
         {
             DrawBgImage();
@@ -37,6 +54,9 @@ namespace Space_colony_game.Screens
             DrawHint();
         }
 
+        /// <summary>
+        /// Рисует фоновое изображение экрана, если оно загружено в <see cref="Assets.Assets.BackgroundScreenImage"/>.
+        /// </summary>
         public void DrawBgImage()
         {
             if (Assets.Assets.BackgroundScreenImage == null) return;
@@ -52,6 +72,7 @@ namespace Space_colony_game.Screens
                 new Color(120, 120, 120, 255));
         }
 
+        /// <summary>Рисует заголовок экрана поражения.</summary>
         private void DrawTitle()
         {
             const string text = "Вы проиграли!";
@@ -67,6 +88,7 @@ namespace Space_colony_game.Screens
                 new Color(180, 40, 40, 255)); // Красный
         }
 
+        /// <summary>Рисует статистику — сколько дней продержалась колония.</summary>
         private void DrawStats()
         {
             string text = $"Ваша колония продержалась: {daysAlive_} дней";
@@ -82,6 +104,7 @@ namespace Space_colony_game.Screens
                 new Color(200, 212, 224, 255));
         }
 
+        /// <summary>Рисует подсказку внизу экрана о возврате в меню.</summary>
         private void DrawHint()
         {
             const string hint = "Нажмите любую кнопку чтобы вернуться в меню";

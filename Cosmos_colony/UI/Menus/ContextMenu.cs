@@ -3,29 +3,47 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Menus
 {
+    /// <summary>
+    /// Контекстное меню для корабля и зданий.
+    /// Поддерживает открытие для выбора специалиста или действий (починить/снести).
+    /// </summary>
     public class ContextMenu
     {
         private enum ItemAction { Repair, Destroy }
+
         private abstract record MenuItem(string Label);
         private record SpecialistItem(string Label, int Index) : MenuItem(Label);
         private record ActionItem(string Label, ItemAction Action, bool Enabled, Color Color)
             : MenuItem(Label);
+
         private Vector2 position_;
         private const float ItemH = 36f;
         private const float MenuW = 220f;
         private const float PadX = 12f;
         private readonly List<MenuItem> items_ = new();
+
         private static readonly Color[] SpecDotColors =
         {
             Assets.Assets.EngineerColor,
             Assets.Assets.ScientistColor,
             Assets.Assets.LogistColor,
         };
+
+        /// <summary>Признак, что меню открыто.</summary>
         public bool IsOpen { get; private set; } = false;
+
+        /// <summary>Колбек выбора специалиста (передается индекс).</summary>
         public Action<int>? OnSelectSpecialist { get; set; }
+
+        /// <summary>Колбек действия починки.</summary>
         public Action? OnRepair { get; set; }
+
+        /// <summary>Колбек действия уничтожения.</summary>
         public Action? OnDestroy { get; set; }
 
+        /// <summary>
+        /// Открыть меню выбора специалиста в экранных координатах.
+        /// </summary>
         public void OpenForSpaceShip(Vector2 screenPosition)
         {
             position_ = ClampToScreen(screenPosition, 5);
@@ -36,6 +54,9 @@ namespace Space_colony_game.UI.Menus
             IsOpen = true;
         }
 
+        /// <summary>
+        /// Открыть меню действий для здания (починить/снести).
+        /// </summary>
         public void OpenForBuilding(Vector2 screenPosition, bool canRepair, bool canDestroy)
         {
             position_ = ClampToScreen(screenPosition, 2);
@@ -51,8 +72,12 @@ namespace Space_colony_game.UI.Menus
             IsOpen = true;
         }
 
+        /// <summary>Закрыть меню.</summary>
         public void Close() => IsOpen = false;
 
+        /// <summary>
+        /// Обработать ввод мыши: закрытие по клику вне меню или выполнение выбранного пункта.
+        /// </summary>
         public void Update()
         {
             if (!IsOpen) return;
@@ -94,6 +119,7 @@ namespace Space_colony_game.UI.Menus
             }
         }
 
+        /// <summary>Отрисовать меню и его элементы.</summary>
         public void Draw()
         {
             if (!IsOpen) return;
@@ -190,6 +216,9 @@ namespace Space_colony_game.UI.Menus
         private Rectangle GetItemRect(int i) =>
             new(position_.X, position_.Y + 30 + i * ItemH, MenuW, ItemH);
 
+        /// <summary>
+        /// Ограничивает позицию меню чтобы оно полностью поместилось на экране.
+        /// </summary>
         private static Vector2 ClampToScreen(Vector2 pos, int itemCount)
         {
             float totalH = 30 + itemCount * ItemH;

@@ -6,25 +6,56 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Panels
 {
+    /// <summary>
+    /// Панель отображения ключевых ресурсов колонии (еда, металл, энергия, люди).
+    /// Рисует иконки, текущее значение и дельту за ход.
+    /// </summary>
     public class ResourcePanel : Panel
     {
+        /// <summary>Внутренний отступ слева для элементов.</summary>
         private int PadIn => Game.ScaleInt(10);
+
+        /// <summary>Высота панели в пикселях (зависит от размера экрана).</summary>
         private int PanelHeight => (int)(Game.ScreenHeight * 0.052f);
+
+        /// <inheritdoc/>
         public override Rectangle Body { get; set; }
+
+        /// <inheritdoc/>
         public override Color BackgroundColor { get; set; }
+
+        /// <inheritdoc/>
         public override Color BorderColor { get; set; }
+
+        /// <inheritdoc/>
         public override float BorderThickness { get; set; }
+
         private readonly Colony colony_;
+
+        /// <summary>
+        /// Вспомогательная структура описывает иконку ресурса и функции получения значения и дельты.
+        /// </summary>
         private readonly record struct ResInfo(
             Texture2D Icon, Func<Colony, float> Val, Func<Colony, float> Delta
         );
+
+        /// <summary>Массив описателей ресурсов в порядке отображения.</summary>
         private static readonly ResInfo[] Res =
-    {
-        new(Assets.Assets.FoodIcon, c => c.Food.Value,   c => c.Food.Delta),
-        new(Assets.Assets.MetalIcon, c => c.Metal.Value,  c => c.Metal.Delta),
-        new(Assets.Assets.EnergyIcon, c => c.Energy.Value, c => c.Energy.Delta),
-        new(Assets.Assets.PeopleIcon, c => c.People.Value, c => c.People.Delta),
-    };
+        {
+            new(Assets.Assets.FoodIcon, c => c.Food.Value,   c => c.Food.Delta),
+            new(Assets.Assets.MetalIcon, c => c.Metal.Value,  c => c.Metal.Delta),
+            new(Assets.Assets.EnergyIcon, c => c.Energy.Value, c => c.Energy.Delta),
+            new(Assets.Assets.PeopleIcon, c => c.People.Value, c => c.People.Delta),
+        };
+
+        /// <summary>
+        /// Создаёт панель ресурсов.
+        /// </summary>
+        /// <param name="x">Позиция X панели (пиксели).</param>
+        /// <param name="y">Позиция Y панели (пиксели).</param>
+        /// <param name="width">Ширина панели (пиксели).</param>
+        /// <param name="height">Высота панели (пиксели).</param>
+        /// <param name="colony">Объект колонии, источник данных ресурсов.</param>
         public ResourcePanel(float x, float y, float width, float height, Colony colony)
         {
             colony_ = colony;
@@ -34,6 +65,7 @@ namespace Space_colony_game.UI.Panels
             BorderThickness = 1f;
         }
 
+        /// <summary>Рисует панель: фон, разделители, иконки, значения и дельты ресурсов.</summary>
         public override void Draw()
         {
             Raylib.DrawRectangleRec(Body, BackgroundColor);

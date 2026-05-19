@@ -10,23 +10,55 @@ using System.Numerics;
 
 namespace Space_colony_game.Screens
 {
+    /// <summary>
+    /// Экран первого уровня: инициализация мира, управление строительством, специализированными окнами и игровым циклом уровня.
+    /// </summary>
     public class LevelOne : GameScreen
     {
+        /// <summary>Менеджер построек уровня.</summary>
         private BuildingManager buildings_ = null!;
+
+        /// <summary>Режим постройки (ghost + размещение).</summary>
         private BuildMode buildMode_ = null!;
+
+        /// <summary>Окно инженера (выбор построек).</summary>
         private Engineer engineer_ = null!;
+
+        /// <summary>Окно учёного (улучшения).</summary>
         private Scientist scientist_ = null!;
+
+        /// <summary>Окно логиста (заказы колонистов).</summary>
         private Logist logist_ = null!;
+
+        /// <summary>Менеджер выделения зданий и обработчик ПКМ/ЛКМ.</summary>
         private SelectionManager selection_ = null!;
+
+        /// <summary>Контекстное меню для корабля/зданий.</summary>
         private ContextMenu contextMenu_ = null!;
+
+        /// <summary>Ссылка на главный корабль (MotherShip).</summary>
         private MotherShip motherShip_ = null!;
+
+        /// <summary>Последнее здание, по которому был выполнен правый клик (для действий контекстного меню).</summary>
         private Building? lastRMBClicledBuilding_ = null!;
+
+        /// <summary>Панель отображения целей уровня.</summary>
         private ObjectivesPanel objectivesPanel_ = null!;
+
+        /// <summary>Флаг паузы уровня.</summary>
         private bool paused_ = false;
 
+        /// <summary>Требуемые значения для победы: еда, металл, колонисты.</summary>
         protected override int[] WinCondition { get; set; } = [250, 250, 150];
+
+        /// <summary>День, при достижении которого наступает поражение.</summary>
         protected override int LoseCondition { get; set; } = 150;
 
+        /// <summary>
+        /// Создаёт экран уровня.
+        /// </summary>
+        /// <param name="screenManager">Менеджер экранов для навигации между экранами.</param>
+        /// <param name="index">Индекс уровня — используется как seed для генерации мира.</param>
         public LevelOne(ScreenManager screenManager, int index)
             : base(screenManager, index)
         {
@@ -34,6 +66,9 @@ namespace Space_colony_game.Screens
             LoseScore = false;
         }
 
+        /// <summary>
+        /// Выполняет инициализацию уровня: загрузку текстур, создание менеджеров, подписки и позиционирование камеры.
+        /// </summary>
         public override void OnEnter()
         {
             Assets.Assets.LoadTextures(0);
@@ -109,7 +144,13 @@ namespace Space_colony_game.Screens
                 )
             );
         }
+
+        /// <summary>Освобождение ресурсов при выходе с уровня.</summary>
         public override void OnExit() => Assets.Assets.UnloadTextures();
+
+        /// <summary>
+        /// Основной цикл обновления уровня: обработка паузы, переходов дня, UI окон, камеры и проверка условий конца игры.
+        /// </summary>
         public override void Update()
         {
             if (WinScore)
@@ -178,6 +219,7 @@ namespace Space_colony_game.Screens
             }
         }
 
+        /// <summary>Рисует мировой слой, постройки, HUD и все активные панели/меню уровня.</summary>
         public override void Draw()
         {
             World_map.Draw(camera);
@@ -197,6 +239,7 @@ namespace Space_colony_game.Screens
                 DrawPauseMenu();
         }
 
+        /// <summary>Рисует меню паузы — затемнённый фон и подсказки.</summary>
         private void DrawPauseMenu()
         {
             Raylib.DrawRectangle(
@@ -222,6 +265,12 @@ namespace Space_colony_game.Screens
                 Assets.Assets.FontMediumSize);
         }
 
+        /// <summary>
+        /// Рисует строку текста паузы по центру экрана со смещением.
+        /// </summary>
+        /// <param name="text">Текст для отображения.</param>
+        /// <param name="offsetY">Смещение по Y относительно вертикального центра.</param>
+        /// <param name="size">Размер шрифта.</param>
         private void DrawPauseText(
             string text,
             int offsetY,
@@ -244,8 +293,11 @@ namespace Space_colony_game.Screens
                 Color.White);
         }
 
+        /// <summary>Пустая реализация фонового рисунка (используется менеджером экранов при сложении слоёв).</summary>
         public override void DrawBgImage() { }
 
+        /// <summary>Открывает соответствующую панель специалиста по индексу.</summary>
+        /// <param name="idx">0 — инженер, 1 — учёный, 2 — логист.</param>
         private void OpenSpecialistPanel(int idx)
         {
             switch (idx)
@@ -256,6 +308,7 @@ namespace Space_colony_game.Screens
             }
         }
 
+        /// <summary>Обрабатывает меню паузы: выход в главное меню по ENTER.</summary>
         private void UpdatePauseMenu()
         {
             if (Raylib.IsKeyPressed(KeyboardKey.Enter))

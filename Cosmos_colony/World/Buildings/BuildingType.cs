@@ -2,6 +2,9 @@
 
 namespace Space_colony_game.World.Buildings
 {
+    /// <summary>
+    /// Идентификаторы типов зданий, используемые для создания и различения типов строений в игре.
+    /// </summary>
     public enum BuildingTypeId
     {
         MotherShip,
@@ -14,26 +17,50 @@ namespace Space_colony_game.World.Buildings
         Laboratory
     }
 
-    public  class BuildingType
+    /// <summary>
+    /// Описание типа здания: метаданные, стоимость, размеры и визуальные параметры.
+    /// </summary>
+    public class BuildingType
     {
+        /// <summary>Идентификатор типа здания.</summary>
         public BuildingTypeId Id { get; init; }
+
+        /// <summary>Отображаемое имя типа здания.</summary>
         public string Name { get; init; } = "";
+
+        /// <summary>Текстовое описание и подсказка для игрока.</summary>
         public string Description { get; init; } = "";
+
+        /// <summary>Краткое обозначение (аббревиатура) для отображения на миникарте/иконках.</summary>
         public string Abbr { get; init; } = "";
 
-        // размеры в тайлах
+        /// <summary>Ширина здания в тайлах.</summary>
         public int SizeX { get; init; } = 1;
+
+        /// <summary>Высота здания в тайлах.</summary>
         public int SizeY { get; init; } = 1;
 
+        /// <summary>Стоимость в металле для постройки.</summary>
         public int CostMetal { get; init; } = 0;
+
+        /// <summary>Стоимость в энергии для постройки (если используется).</summary>
         public int CostEnergy { get; init; } = 0;
 
+        /// <summary>Потребление энергии в сутки (0 — не потребляет).</summary>
         public int PowerPerDay { get; init; } = 0;
+
+        /// <summary>Требуется ли наличие фундамента для постройки этого типа.</summary>
         public bool RequiresFoundation { get; init; } = true;
 
+        /// <summary>Основной цвет для отображения плитки/иконки здания.</summary>
         public Color Color { get; init; } = Color.Gray;
+
+        /// <summary>Цвет текста аббревиатуры.</summary>
         public Color AbbrevColor { get; init; } = Color.White;
 
+        // --- Предопределённые типы зданий ---
+
+        /// <summary>Тип «Фундамент» (используется как основание для других зданий).</summary>
         public static readonly BuildingType Foundation = new()
         {
             Id = BuildingTypeId.Foundation,
@@ -48,6 +75,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(180, 180, 180, 255)
         };
 
+        /// <summary>Тип «Ферма» — производит еду.</summary>
         public static readonly BuildingType Farm = new()
         {
             Id = BuildingTypeId.Farm,
@@ -62,6 +90,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(100, 220, 100, 255),
         };
 
+        /// <summary>Тип «Шахта» — добывает металл.</summary>
         public static readonly BuildingType Mine = new()
         {
             Id = BuildingTypeId.Mine,
@@ -76,6 +105,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(200, 160, 96, 255),
         };
 
+        /// <summary>Тип «Солнечная панель» — вырабатывает энергию днем.</summary>
         public static readonly BuildingType SolarPanel = new()
         {
             Id = BuildingTypeId.SolarPanel,
@@ -90,6 +120,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(240, 208, 64, 255),
         };
 
+        /// <summary>Тип «Склад» — увеличивает ёмкость ресурсов.</summary>
         public static readonly BuildingType Storage = new()
         {
             Id = BuildingTypeId.Storage,
@@ -104,6 +135,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(200, 170, 100, 255),
         };
 
+        /// <summary>Тип «Жильё» — увеличивает вместимость колонистов.</summary>
         public static readonly BuildingType House = new()
         {
             Id = BuildingTypeId.House,
@@ -118,6 +150,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(96, 184, 224, 255),
         };
 
+        /// <summary>Тип «Лаборатория» — открывает улучшения.</summary>
         public static readonly BuildingType Laboratory = new()
         {
             Id = BuildingTypeId.Laboratory,
@@ -132,6 +165,7 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(180, 100, 220, 255),
         };
 
+        /// <summary>Тип «Главный корабль» — стартовая база игрока.</summary>
         public static readonly BuildingType MotherShip = new()
         {
             Id = BuildingTypeId.MotherShip,
@@ -146,8 +180,10 @@ namespace Space_colony_game.World.Buildings
             AbbrevColor = new Color(100, 180, 255, 255),
         };
 
+        /// <summary>Алиас для типа MotherShip.</summary>
         public static readonly BuildingType MotherShipType = MotherShip;
 
+        /// <summary>Массив всех доступных типов для перечисления в интерфейсах.</summary>
         public static readonly BuildingType[] All =
         {
             Foundation, Farm, Mine, SolarPanel, Storage, House, Laboratory

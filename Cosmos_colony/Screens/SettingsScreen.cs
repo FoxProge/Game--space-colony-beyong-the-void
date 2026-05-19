@@ -5,9 +5,16 @@ using System.Numerics;
 
 namespace Space_colony_game.Screens
 {
+    /// <summary>
+    /// Экран настроек: выбор разрешения и режима полноэкранного отображения.
+    /// Позволяет изменить и сохранить настройки в глобальном объекте <see cref="GameSettings.Current"/>.
+    /// </summary>
     public class SettingsScreen : IScreen
     {
+        /// <summary>Менеджер экранов для навигации назад в меню.</summary>
         private readonly ScreenManager screenManager_;
+
+        /// <summary>Поддерживаемые разрешения экрана (ширина, высота).</summary>
         private readonly (int W, int H)[] Resolutions =
         {
             (1280, 720),
@@ -19,11 +26,15 @@ namespace Space_colony_game.Screens
         private int originalResolutionIdx_;
         private bool fullscreen_;
         private bool originalFullscreen_;
+
+        /// <summary>Возвращает true, если текущие выборы отличаются от исходных настроек.</summary>
         private bool SettingsChanged =>
             resolutionIdx_ != originalResolutionIdx_ ||
             fullscreen_ != originalFullscreen_;
 
+        /// <summary>Прямоугольник панели настроек.</summary>
         private Rectangle SettingsPanel;
+
         private readonly Button btnBack;
         private readonly Button btnSave;
         private readonly Button btnResolutionOne;
@@ -32,6 +43,10 @@ namespace Space_colony_game.Screens
         private readonly Button btnFullscreenOn;
         private readonly Button btnFullscreenOff;
 
+        /// <summary>
+        /// Создаёт экран настроек и инициализирует элементы управления.
+        /// </summary>
+        /// <param name="screenManager">Менеджер экранов для возврата в главное меню.</param>
         public SettingsScreen(ScreenManager screenManager)
         {
             screenManager_ = screenManager;
@@ -84,6 +99,9 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>
+        /// Загружает текущие значения из <see cref="GameSettings.Current"/> в контролы экрана.
+        /// </summary>
         public void OnEnter()
         {
             resolutionIdx_ = Array.FindIndex(Resolutions,
@@ -98,8 +116,13 @@ namespace Space_colony_game.Screens
             originalFullscreen_ = fullscreen_;
         }
 
+        /// <summary>Вызывается при выходе со страницы настроек (не используется).</summary>
         public void OnExit() { }
 
+        /// <summary>
+        /// Обрабатывает ввод пользователя: переключение вариантов разрешения и полноэкранного режима,
+        /// сохранение изменений или возврат в главное меню.
+        /// </summary>
         public void Update()
         {
             if (btnBack.IsLMB_Pressed())
@@ -131,6 +154,7 @@ namespace Space_colony_game.Screens
                 fullscreen_ = false;
         }
 
+        /// <summary>Рисует весь экран настроек и элементы управления.</summary>
         public void Draw()
         {
             DrawBgImage();
@@ -147,6 +171,9 @@ namespace Space_colony_game.Screens
             btnSave.Draw();
         }
 
+        /// <summary>
+        /// Рисует фоновое изображение экрана, если оно задано в ассетах.
+        /// </summary>
         public void DrawBgImage()
         {
             if (Assets.Assets.BackgroundScreenImage == null) return;
@@ -164,6 +191,7 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>Рисует заголовок раздела настроек по центру экрана.</summary>
         private void DrawTitle()
         {
             const string text = "Настройки";
@@ -179,6 +207,7 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>Рисует основную панель настроек с заголовками блоков.</summary>
         private void DrawPanel()
         {
             Raylib.DrawRectangleRec(
@@ -211,6 +240,7 @@ namespace Space_colony_game.Screens
                 Assets.Assets.FontMediumSize, 1, new Color(200, 212, 224, 255));
         }
 
+        /// <summary>Рисует предупреждение о необходимости перезапуска, если настройки были изменены.</summary>
         private void DrawMessage()
         {
             if (!SettingsChanged) return;
@@ -241,6 +271,7 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>Обновляет цвета кнопок в зависимости от текущего выбора.</summary>
         private void SetButtonColors()
         {
            btnResolutionOne.BackgroundColor = resolutionIdx_ == 0

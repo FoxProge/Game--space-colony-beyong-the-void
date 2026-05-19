@@ -6,14 +6,31 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Panels
 {
+    /// <summary>
+    /// Панель прогноза погоды — рисует прогноз на ближайшие дни и обозначает опасные дни цветом.
+    /// </summary>
     public class WeatherPanel : Panel
     {
+        /// <inheritdoc/>
         public override Rectangle Body { get; set; }
+
+        /// <inheritdoc/>
         public override Color BackgroundColor { get; set; }
+
+        /// <inheritdoc/>
         public override Color BorderColor { get; set; }
+
+        /// <inheritdoc/>
         public override float BorderThickness { get; set; }
 
         private readonly Colony colony_;
+
+        /// <summary>
+        /// Возвращает строковый значок для данного типа погоды.
+        /// Используется для компактного отображения иконок в панели.
+        /// </summary>
+        /// <param name="d">День прогноза.</param>
+        /// <returns>Короткая строка-иконка.</returns>
         private static string WeatherIcon(WeatherDay d) => d.Type switch
         {
             WeatherType.Sunny => "*",
@@ -23,6 +40,14 @@ namespace Space_colony_game.UI.Panels
             _ => "??"
         };
 
+        /// <summary>
+        /// Создаёт панель прогноза погоды.
+        /// </summary>
+        /// <param name="x">Позиция X панели (пиксели).</param>
+        /// <param name="y">Позиция Y панели (пиксели).</param>
+        /// <param name="width">Ширина панели (пиксели).</param>
+        /// <param name="height">Высота панели (пиксели).</param>
+        /// <param name="colony">Объект колонии, откуда берётся прогноз погоды.</param>
         public WeatherPanel(float x, float y, float width, float height, Colony colony)
         {
             colony_ = colony;
@@ -32,6 +57,10 @@ namespace Space_colony_game.UI.Panels
             BorderThickness = 1f;
         }
 
+        /// <summary>
+        /// Рисует панель погоды: фон, разделители и текст прогноза для ближайших дней.
+        /// Подкрашивает текущий день отдельно и опасные дни — цветом предупреждения.
+        /// </summary>
         public override void Draw()
         {
             Raylib.DrawRectangleRec(Body, BackgroundColor);

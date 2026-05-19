@@ -6,35 +6,56 @@ using Space_colony_game.UI;
 
 namespace Space_colony_game.Screens
 {
+    /// <summary>
+    /// Главное меню игры: отрисовка заголовка, кнопок перехода и обработка базового ввода.
+    /// </summary>
     public class MainMenuScreen : IScreen
     {
+        /// <summary>Менеджер экранов для навигации между экранами.</summary>
         private readonly ScreenManager screenManager_;
+
+        /// <summary>Опциональная фонова́я текстура (если используется).</summary>
         private Texture2D BbImage;
+
+        /// <summary>Кнопка запуска игры / выбора уровня.</summary>
         private readonly Button btnPlay_ = new(
             Game.ScaleInt(490), Game.ScaleInt(364),
             Game.ScaleInt(300), Game.ScaleInt(54),
             "Играть"
         );
+
+        /// <summary>Кнопка перехода к настройкам.</summary>
         private readonly Button btnSettings_ = new(
             Game.ScaleInt(490), Game.ScaleInt(438),
             Game.ScaleInt(300), Game.ScaleInt(54),
             "Настройки"
         );
+
+        /// <summary>Кнопка выхода из игры.</summary>
         private readonly Button btnExit_ = new(
             Game.ScaleInt(490), Game.ScaleInt(512),
             Game.ScaleInt(300), Game.ScaleInt(54),
             "Выход"
         );
 
+        /// <summary>
+        /// Создаёт экран главного меню.
+        /// </summary>
+        /// <param name="screenManager">Менеджер экранов, используемый для переходов.</param>
         public MainMenuScreen(ScreenManager screenManager)
         {
             screenManager_ = screenManager;
         }
 
+        /// <summary>Вызывается при активации экрана (здесь не используется).</summary>
         public void OnEnter() { }
 
+        /// <summary>Вызывается при деактивации экрана (здесь не используется).</summary>
         public void OnExit() { }
 
+        /// <summary>
+        /// Обрабатывает ввод: при нажатии ЛКМ проверяет состояние кнопок и выполняет переход/выход.
+        /// </summary>
         public void Update()
         {
             if (!Raylib.IsMouseButtonPressed(MouseButton.Left)) return;
@@ -46,6 +67,8 @@ namespace Space_colony_game.Screens
             else if (btnExit_.IsAvailable && btnExit_.IsHovered())
                 Game.ShouldExit = true;
         }
+
+        /// <summary>Рисует меню: фон, заголовок, кнопки и версию приложения.</summary>
         public void Draw()
         {
             DrawBgImage();
@@ -56,6 +79,9 @@ namespace Space_colony_game.Screens
             DrawVersion();
         }
 
+        /// <summary>
+        /// Рисует фоновую текстуру экрана, если она загружена в <see cref="Assets.Assets.BackgroundScreenImage"/>.
+        /// </summary>
         public void DrawBgImage()
         {
             if (Assets.Assets.BackgroundScreenImage == null) return;
@@ -73,6 +99,7 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>Рисует заголовок игры по центру экрана.</summary>
         private static void DrawTitle()
         {
             const string title = "Space colony: Beyond the Void";
@@ -93,6 +120,7 @@ namespace Space_colony_game.Screens
             );
         }
 
+        /// <summary>Рисует версию игры в правом нижнем углу экрана.</summary>
         private static void DrawVersion()
         {
             const string ver = "v0.1";

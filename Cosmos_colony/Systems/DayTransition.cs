@@ -3,6 +3,10 @@ using Space_colony_game.Core;
 
 namespace Space_colony_game.Systems
 {
+    /// <summary>
+    /// Управляет визуальной анимацией перехода между днями — фейд-ин, «ночь» и фейд-аут.
+    /// Позволяет задать обработчик наступления полуночи (<see cref="OnMidnight"/>), который будет вызван в середине ночной фазы.
+    /// </summary>
     public class DayTransition
     {
         private const float FadeInOutDuration = 0.4f;
@@ -12,10 +16,22 @@ namespace Space_colony_game.Systems
         private float timer_ = 0f;
         private int dayNum_ = 1;
 
+        /// <summary>Возвращает true, если воспроизводится любая фаза перехода.</summary>
         public bool IsPlaying => phase_ != Phase.Idle;
+
+        /// <summary>
+        /// Делегат, вызываемый при наступлении полуночи в моменте между фазами FadeIn и FadeOut.
+        /// Обычно используется для применения логики перехода на следующий день (например, вызов <c>Colony.ProcessDay()</c>).
+        /// </summary>
         public Action? OnMidnight {  get; set; }
+
         private bool midnightFired_ = false;
 
+        /// <summary>
+        /// Запускает проигрывание перехода к указанному дню.
+        /// Если переход уже проигрывается, вызов игнорируется.
+        /// </summary>
+        /// <param name="nextDay">Номер следующего дня, который будет показан в лейбле.</param>
         public void Start(int nextDay)
         {
             if (IsPlaying) return;
@@ -25,6 +41,7 @@ namespace Space_colony_game.Systems
             midnightFired_ = false;
         }
 
+        /// <summary>Обновляет внутреннее состояние и таймер анимации; должен вызываться раз в кадр.</summary>
         public void Update()
         {
             if (phase_ == Phase.Idle) return;
@@ -41,6 +58,7 @@ namespace Space_colony_game.Systems
                     break;
 
                 case Phase.Night:
+                    // В середине ночной фазы триггерим OnMidnight один раз
                     if(!midnightFired_ && timer_ >= NightDuration * 0.3f)
                     {
                         midnightFired_ = true;
@@ -64,6 +82,7 @@ namespace Space_colony_game.Systems
             }
         }
 
+        /// <summary>Рисует затемнение экрана и подпись номера дня в зависимости от текущей фазы.</summary>
         public void Draw()
         {
             if (phase_ == Phase.Idle) return;
@@ -83,6 +102,8 @@ namespace Space_colony_game.Systems
                 DrawDayLabel(alpha);
         }
 
+        /// <summary>Рисует крупный номер дня и подпись в центре экрана во время сильного затемнения.</summary>
+        /// <param name="overlayAlpha">Текущая альфа-значение наложения (0..255).</param>
         private void DrawDayLabel(byte overlayAlpha)
         {
             byte textAlpha = (byte)Math.Clamp((overlayAlpha - 180) * 3, 0, 255);
@@ -127,6 +148,9 @@ namespace Space_colony_game.Systems
             );
         }
 
+        /// <summary>Плавная функция интерполяции ease-in-out для плавных фейдов.</summary>
+        /// <param name="t">Параметр 0..1.</param>
+        /// <returns>Интерполированное значение 0..1.</returns>
         private static float EaseInOut(float t)
         {
             t = Math.Clamp(t, 0f, 1f);

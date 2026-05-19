@@ -4,6 +4,9 @@ using System.Numerics;
 
 namespace Space_colony_game.World
 {
+    /// <summary>
+    /// Тип тайла карты мира.
+    /// </summary>
     public enum TileType
     {
         Ground,
@@ -13,29 +16,59 @@ namespace Space_colony_game.World
         Crater
     }
 
+    /// <summary>
+    /// Одна клетка карты — содержит тип поверхности, индекс текстуры и флаг возможности строительства.
+    /// </summary>
     public class Tile
     {
+        /// <summary>Тип тайла.</summary>
         public TileType Type { get; init; }
+
+        /// <summary>Индекс текстуры для данного типа (используется при рисовании наборов текстур).</summary>
         public int TextureId { get; init; } = 0;
+
+        /// <summary>Возвращает true, если по этому тайлу можно строить (земля или песок).</summary>
         public bool Buildable => Type is TileType.Ground or TileType.Sand;
     }
 
+    /// <summary>
+    /// Карта мира: хранит сетку тайлов, генерирует её по seed и предоставляет методы отрисовки.
+    /// </summary>
     public class WorldMap
     {
+        /// <summary>Количество колонок карты (ширина в тайлах).</summary>
         public static readonly int Columns = 50;
+
+        /// <summary>Количество строк карты (высота в тайлах).</summary>
         public static readonly int Rows = 50;
+
+        /// <summary>Размер одного тайла в пикселях.</summary>
         public static readonly int TileSize = 64;
 
+        /// <summary>Полная ширина мира в пикселях.</summary>
         public static int WorldWidth { get; private set; } =  Columns * TileSize;
+
+        /// <summary>Полная высота мира в пикселях.</summary>
         public static int WorldHeight { get; private set; } =  Columns * TileSize;
 
+        /// <summary>Матрица тайлов карты [col, row].</summary>
         public static readonly Tile[,] Tiles = new Tile[Columns, Rows];
 
+        /// <summary>
+        /// Создаёт карту мира и генерирует содержимое на основе seed.
+        /// </summary>
+        /// <param name="seed">Seed для генератора случайных чисел (по умолчанию 13).</param>
         public WorldMap(int seed = 13)
         {
             GenerateMap(seed);
         }
 
+        /// <summary>
+        /// Возвращает тайл по индексам колонки и строки; при выходе за границы возвращает тайл типа Rock.
+        /// </summary>
+        /// <param name="col">Колонка (x) в тайлах.</param>
+        /// <param name="row">Строка (y) в тайлах.</param>
+        /// <returns>Экземпляр <see cref="Tile"/> для запрошенной клетки.</returns>
         public Tile GetTile(int col, int row)
         {
             if (col < 0 || col >= Columns || row < 0 || row >= Rows)
@@ -43,6 +76,10 @@ namespace Space_colony_game.World
             return Tiles[col, row];
         }
 
+        /// <summary>
+        /// Рисует видимую часть карты, используя данные камеры для отсечения и преобразования координат.
+        /// </summary>
+        /// <param name="camera">Камера, задающая область просмотра и зум.</param>
         public void Draw(Camera camera)
         {
             int colFrom = Math.Max(0, (int)(camera.Position.X / TileSize));
@@ -84,6 +121,8 @@ namespace Space_colony_game.World
             }
         }
 
+        /// <summary>Генерирует карту по заданному seed — заполняет массив Tiles.</summary>
+        /// <param name="seed">Seed генератора случайных чисел.</param>
         private void GenerateMap(int seed)
         {
             var rng = new Random(seed);
@@ -123,6 +162,7 @@ namespace Space_colony_game.World
                     };
         }
 
+        /// <summary>Рисует один тайл на экране, используя текстуры или fallback-цвета.</summary>
         private static void DrawTile(Tile tile, int x, int y, int w, int h)
         {
             var dest = new Rectangle(x, y, w, h);
@@ -156,6 +196,9 @@ namespace Space_colony_game.World
 
         }
 
+        /// <summary>
+        /// Пытается отрисовать текстуру из массива textures по индексу; при отсутствии текстур используется fallback-цвет.
+        /// </summary>
         private static void DrawWithFallback(
             Texture2D[] textures, int idx, Rectangle dest, Color fallback)
         {
@@ -173,6 +216,10 @@ namespace Space_colony_game.World
             Raylib.DrawRectangleRec(dest, fallback);
         }
 
+        /// <summary>
+        /// Возвращает цвет для заданного типа тайла (используется при рисовании миникарты и отладке).
+        /// </summary>
+        /// <param name="type">Тип тайла.</param>
         public static Color TileColor(TileType type) => type switch
         {
             TileType.Ground => Assets.Assets.ColorGround,

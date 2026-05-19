@@ -3,21 +3,43 @@ using System.Numerics;
 
 namespace Space_colony_game.World.Buildings
 {
+    /// <summary>
+    /// Специальный тип здания — главный корабль игрока.
+    /// Является неподвижной стартовой базой, не может быть уничтожен и отображается отдельной графикой/иконкой.
+    /// </summary>
     public class MotherShip : Building
     {
+        /// <summary>Размер корабля в тайлах (ширина и высота равны).</summary>
         public const int Size = 4;
+
+        /// <summary>Корабль нельзя разрушить игровыми средствами.</summary>
         public override bool CanBeDestroyed => false;
 
+        /// <summary>
+        /// Событие правого клика по кораблю. Передаётся в обработчик экранных координат или выполняет нужное действие.
+        /// </summary>
         public Action? OnrightClick { get; set; }
 
-        //анимация пульсации рамки
+        // анимация пульсации рамки
         private float _pulseTimer = 0f;
 
+        /// <summary>
+        /// Конструктор экземпляра корабля. Параметры позиции и типа передаются далее при создании через фабрику.
+        /// </summary>
+        /// <param name="col">Колонка (x) в тайлах.</param>
+        /// <param name="row">Строка (y) в тайлах.</param>
+        /// <param name="type">Тип здания (должен быть <see cref="BuildingType.MotherShip"/>).</param>
         public MotherShip(int col, int row, BuildingType type)
         {
             _ = col; _ = row; _ = type;
         }
 
+        /// <summary>
+        /// Фабричный метод создания основного корабля: возвращает готовый объект с установленными Type, Col, Row и Id = 0.
+        /// </summary>
+        /// <param name="col">Колонка (x) в тайлах для размещения корабля.</param>
+        /// <param name="row">Строка (y) в тайлах для размещения корабля.</param>
+        /// <param name="type">Тип здания для корабля (обычно <see cref="BuildingType.MotherShip"/>).</param>
         public static MotherShip Create(int col, int row, BuildingType type)
         {
             return new MotherShip(col, row, type)
@@ -29,8 +51,18 @@ namespace Space_colony_game.World.Buildings
             };
         }
 
+        /// <summary>Ежедневные эффекты у корабля отсутствуют.</summary>
         public override void OnDayPassed() { }
 
+        /// <summary>
+        /// Отрисовывает внешнее представление корабля в указанных экранных координатах.
+        /// Если доступна текстура <see cref="Assets.Assets.TextureSpaceShip"/>, используется она,
+        /// иначе рисуется процедурный placeholder с пульсирующей рамкой и меткой.
+        /// </summary>
+        /// <param name="x">Левая координата в пикселях на экране.</param>
+        /// <param name="y">Верхняя координата в пикселях на экране.</param>
+        /// <param name="w">Ширина области отрисовки в пикселях.</param>
+        /// <param name="h">Высота области отрисовки в пикселях.</param>
         public override void DrawBody(int x, int y, int w, int h)
         {
             if (Assets.Assets.TextureSpaceShip is { } tex && tex.Id != 0)

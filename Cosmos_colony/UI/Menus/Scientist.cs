@@ -4,11 +4,18 @@ using System.Numerics;
 
 namespace Space_colony_game.UI.Menus
 {
+    /// <summary>
+    /// Окно учёного — система улучшений зданий.
+    /// Позволяет повышать уровни улучшений при наличии лаборатории и ресурсов.
+    /// </summary>
     public class Scientist
     {
         private readonly Colony colony_;
 
+        /// <summary>Признак открытия панели.</summary>
         public bool IsOpen { get; private set; } = false;
+
+        /// <summary>Счётчик построенных лабораторий (статический, доступен без инстанса).</summary>
         public static int LabBuilded { get; set; } = 0;
 
         private const int PanelW = 520;
@@ -28,13 +35,13 @@ namespace Space_colony_game.UI.Menus
 
         private static readonly UpgradeInfo[] Upgrades =
         {
-        new("Фермы",         "Увеличивает производство\nеды на 10% за уровень.",
-            new Color(60,  160,  60,  255), new Color(100, 220, 100, 255)),
-        new("Шахты",         "Увеличивает добычу\nметалла на 10% за уровень.",
-            new Color(140,  90,  50,  255), new Color(200, 160,  96, 255)),
-        new("Солн. панели",  "Увеличивает выработку\nэнергии на 10% за уровень.",
-            new Color(160, 140,  30,  255), new Color(240, 208,  64, 255)),
-    };
+            new("Фермы",         "Увеличивает производство\nеды на 10% за уровень.",
+                new Color(60,  160,  60,  255), new Color(100, 220, 100, 255)),
+            new("Шахты",         "Увеличивает добычу\nметалла на 10% за уровень.",
+                new Color(140,  90,  50,  255), new Color(200, 160,  96, 255)),
+            new("Солн. панели",  "Увеличивает выработку\nэнергии на 10% за уровень.",
+                new Color(160, 140,  30,  255), new Color(240, 208,  64, 255)),
+        };
 
         private static readonly Color BgPanel = new(10, 16, 24, 240);
         private static readonly Color BgList = new(6, 10, 18, 255);
@@ -58,19 +65,27 @@ namespace Space_colony_game.UI.Menus
             colony_ = colony;
         }
 
+        /// <summary>
+        /// Возвращает множитель эффективности для указанного типа улучшения.
+        /// </summary>
+        /// <param name="upgradeIdx">Индекс улучшения.</param>
         public static float GetEfficiencyBonus(int upgradeIdx)
         {
             if (upgradeIdx < 0 || upgradeIdx >= UpgradeCount) return 1f;
             return 1f + levels_[upgradeIdx] * 0.1f;
         }
 
+        /// <summary>Открывает панель, только если есть хотя бы одна лаборатория.</summary>
         public void Open()
         {
             if (LabBuilded != 0)
                 IsOpen = true;
         }
+
+        /// <summary>Закрывает панель.</summary>
         public void Close() => IsOpen = false;
 
+        /// <summary>Обрабатывает ввод и взаимодействие с элементами панели.</summary>
         public void Update()
         {
             if (!IsOpen) return;
@@ -82,6 +97,7 @@ namespace Space_colony_game.UI.Menus
 
             var mouse = Raylib.GetMousePosition();
 
+            // Закрыть при клике вне панели
             if (Raylib.IsMouseButtonPressed(MouseButton.Left) &&
                 !Raylib.CheckCollisionPointRec(mouse, new Rectangle(PanelX, PanelY, PanelW, PanelH)))
             {
@@ -91,6 +107,7 @@ namespace Space_colony_game.UI.Menus
 
             if (!Raylib.IsMouseButtonPressed(MouseButton.Left)) return;
 
+            // Выбор элемента списка
             for (int i = 0; i < Upgrades.Length; i++)
             {
                 if (Raylib.CheckCollisionPointRec(mouse, GetListItemRect(i)))
@@ -100,16 +117,19 @@ namespace Space_colony_game.UI.Menus
                 }
             }
 
+            // Кнопка улучшения
             if (Raylib.CheckCollisionPointRec(mouse, GetUpgradeBtnRect()))
             {
                 TryUpgrade(selectedIdx_);
                 return;
             }
 
+            // Кнопка закрытия
             if (Raylib.CheckCollisionPointRec(mouse, GetCloseBtnRect()))
                 Close();
         }
 
+        /// <summary>Рисует окно улучшений.</summary>
         public void Draw()
         {
             if (!IsOpen) return;
@@ -326,12 +346,11 @@ namespace Space_colony_game.UI.Menus
             float curY = MathF.Round(y);
             foreach (var line in text.Split('\n'))
             {
-                Raylib.DrawTextEx
-                    (Assets.Assets.FontSmall, line,
+                Raylib.DrawTextEx(
+                    Assets.Assets.FontSmall, line,
                     new Vector2(MathF.Round(x), curY),
                     Assets.Assets.FontSmallSize, 1, new Color(100, 120, 140, 255));
-                    curY = MathF.Round(curY + lineH
-                );
+                curY = MathF.Round(curY + lineH);
             }
         }
 

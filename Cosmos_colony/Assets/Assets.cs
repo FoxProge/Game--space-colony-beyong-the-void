@@ -2,10 +2,18 @@
 
 namespace Space_colony_game.Assets
 {
+    /// <summary>
+    /// Глобальный менеджер ассетов игры.
+    /// Отвечает за загрузку и выгрузку всех графических ресурсов и шрифтов.
+    /// РЕализован как статический доступ (singleton-паттерн)
+    /// </summary>
     public static class Assets
     {
+        /// <summary>Малый UI шрифт.</summary>
         public static Font FontSmall { get; private set; }
+        /// <summary>Средний UI шрифт.</summary>
         public static Font FontMedium { get; private set; }
+        /// <summary>Крупный UI шрифт.</summary>
         public static Font FontLarge { get; private set; }
 
         public static int FontSmallSize = 14;
@@ -81,7 +89,11 @@ namespace Space_colony_game.Assets
         public static readonly Color SelectionColor = new(60, 220, 80, 200);
 
         private static bool loaded_ = false;
-        
+
+        /// <summary>
+        /// Загружает базовые ресурсы игры (UI, иконки, шрифты).
+        /// Должен вызываться один раз при запуске приложения.
+        /// </summary>
         public static void Load()
         {
             if (loaded_) return;
@@ -96,6 +108,10 @@ namespace Space_colony_game.Assets
             loaded_ = true;
         }
 
+        /// <summary>
+        /// Полностью выгружает все загруженные ресурсы (текстуры и шрифты).
+        /// Используется при завершении игры или смене сцены.
+        /// </summary>
         public static void Unload()
         {
             if (!loaded_) return;
@@ -126,6 +142,14 @@ namespace Space_colony_game.Assets
             Console.WriteLine("\t[Assets]: All unloaded\n");
         }
 
+        /// <summary>
+        /// Загружает текстуры мира в зависимости от уровня планеты.
+        /// </summary>
+        /// <param name="level">
+        /// Индекс планеты:
+        /// 0 = Mars
+        /// 1 = Titan
+        /// </param>
         public static void LoadTextures(int level)
         {
             TextureFoundation = LoadTextureSafe("Assets/Sprites/Buildings/foundation.png");
@@ -175,6 +199,9 @@ namespace Space_colony_game.Assets
             }
         }
 
+        /// <summary>
+        /// Выгрузкавсех текстур, загруженных в методе LoadTextures
+        /// </summary>
         public static void UnloadTextures()
         {
             if(TileGround.Length > 0)
@@ -195,6 +222,11 @@ namespace Space_colony_game.Assets
             Console.WriteLine("\t[Assets]: Unload all textures\n");
         }
 
+        /// <summary>
+        /// Загружает массив текстур из списка путей.
+        /// </summary>
+        /// <param name="paths">Список путей к текстурам.</param>
+        /// <returns>Массив загруженных текстур.</returns>
         private static Texture2D[] LoadTextureArray(params string[] paths)
         {
             List<Texture2D> textures = new List<Texture2D>();
@@ -207,12 +239,22 @@ namespace Space_colony_game.Assets
             return textures.ToArray();
         }
 
+        /// <summary>
+        /// Освобождает массив текстур.
+        /// </summary>
+        /// <param name="array">Массив текстур для выгрузки.</param>
         private static void UnloadTextureArray(Texture2D[] array)
         {
             foreach (Texture2D texture in array)
                 UnloadTextureSafe(texture);
         }
 
+        /// <summary>
+        /// Безопасная загрузка текстуры из файла.
+        /// Если файл отсутствует — возвращается default Texture2D (Id = 0).
+        /// </summary>
+        /// <param name="path">Путь к файлу текстуры.</param>
+        /// <returns>Загруженная текстура или пустая (Id = 0).</returns>
         private static Texture2D LoadTextureSafe(string path)
         {
             if(!File.Exists(path))
@@ -227,12 +269,19 @@ namespace Space_colony_game.Assets
             return texture;
         }
 
+        /// <summary>
+        /// Безопасно выгружает текстуру, если она существует и валидна.
+        /// </summary>
+        /// <param name="texture">Текстура для освобождения.</param>
         private static void UnloadTextureSafe(Texture2D? texture)
         {
             if (texture.HasValue && texture.Value.Id != 0)
                 Raylib.UnloadTexture(texture.Value);
         }
 
+        /// <summary>
+        /// Загружает шрифты с поддержкой кириллицы и дополнительных Unicode символов.
+        /// </summary>
         private static void LoadFonts()
         {
             int[] codepoints = BuildCodepoints(
@@ -247,6 +296,13 @@ namespace Space_colony_game.Assets
             FontLarge = LoadCyrillicSymbols(path, FontLargeSize, codepoints);
         }
 
+        /// <summary>
+        /// Загружает шрифт с заданным размером и набором codepoints.
+        /// </summary>
+        /// <param name="path">Путь к TTF файлу.</param>
+        /// <param name="size">Размер шрифта.</param>
+        /// <param name="codepoints">Unicode символы для загрузки.</param>
+        /// <returns>Загруженный шрифт или default font при ошибке.</returns>
         private static Font LoadCyrillicSymbols(string path, int size, int[] codepoints)
         {
             string fullPath = Path.GetFullPath(path);
@@ -272,6 +328,15 @@ namespace Space_colony_game.Assets
             return font;
         }
 
+        /// <summary>
+        /// Формирует массив Unicode codepoints из диапазонов и дополнительных символов.
+        /// </summary>
+        /// <param name="from1">Начало первого диапазона.</param>
+        /// <param name="to1">Конец первого диапазона.</param>
+        /// <param name="from2">Начало второго диапазона.</param>
+        /// <param name="to2">Конец второго диапазона.</param>
+        /// <param name="extra">Дополнительные символы.</param>
+        /// <returns>Массив Unicode кодов.</returns>
         private static int[] BuildCodepoints(
             int from1, int to1,
             int from2, int to2,

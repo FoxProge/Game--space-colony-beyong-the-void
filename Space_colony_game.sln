@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36915.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space_colony_game", "Cosmos_colony\Space_colony_game.csproj", "{EEE48DCA-DD67-451C-A609-0AE426343CC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEE48DCA-DD67-451C-A609-0AE426343CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE48DCA-DD67-451C-A609-0AE426343CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE48DCA-DD67-451C-A609-0AE426343CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE48DCA-DD67-451C-A609-0AE426343CC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F488F5A8-4C58-472A-BE40-866E690921CF}
+	EndGlobalSection
+EndGlobal

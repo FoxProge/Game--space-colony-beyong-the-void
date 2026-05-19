@@ -1,0 +1,117 @@
+﻿using Raylib_cs;
+using System.Numerics;
+using Space_colony_game.Core;
+using Space_colony_game.UI;
+
+
+namespace Space_colony_game.Screens
+{
+    public class MainMenuScreen : IScreen
+    {
+        private readonly ScreenManager screenManager_;
+        private Texture2D BbImage;
+        private readonly Button btnPlay_ = new(
+            Game.ScaleInt(490), Game.ScaleInt(364),
+            Game.ScaleInt(300), Game.ScaleInt(54),
+            "Играть"
+        );
+        private readonly Button btnSettings_ = new(
+            Game.ScaleInt(490), Game.ScaleInt(438),
+            Game.ScaleInt(300), Game.ScaleInt(54),
+            "Настройки"
+        );
+        private readonly Button btnExit_ = new(
+            Game.ScaleInt(490), Game.ScaleInt(512),
+            Game.ScaleInt(300), Game.ScaleInt(54),
+            "Выход"
+        );
+
+        public MainMenuScreen(ScreenManager screenManager)
+        {
+            screenManager_ = screenManager;
+        }
+
+        public void OnEnter() { }
+
+        public void OnExit() { }
+
+        public void Update()
+        {
+            if (!Raylib.IsMouseButtonPressed(MouseButton.Left)) return;
+
+            if (btnPlay_.IsAvailable && btnPlay_.IsHovered())
+                screenManager_.GoTo(new SelectLevelScreen(screenManager_));
+            else if (btnSettings_.IsAvailable && btnSettings_.IsHovered()) 
+                screenManager_.GoTo(new SettingsScreen(screenManager_));
+            else if (btnExit_.IsAvailable && btnExit_.IsHovered())
+                Game.ShouldExit = true;
+        }
+        public void Draw()
+        {
+            DrawBgImage();
+            DrawTitle();
+            btnPlay_.Draw();
+            btnSettings_.Draw();
+            btnExit_.Draw(exitBtn: true);    
+            DrawVersion();
+        }
+
+        public void DrawBgImage()
+        {
+            if (Assets.Assets.BackgroundScreenImage == null) return;
+
+            Raylib.DrawTexturePro(
+                Assets.Assets.BackgroundScreenImage.Value,
+                new Rectangle(
+                    0, 0,
+                    Assets.Assets.BackgroundScreenImage.Value.Width,
+                    Assets.Assets.BackgroundScreenImage.Value.Height
+                ),
+                new Rectangle(0, 0, Game.ScreenWidth, Game.ScreenHeight),
+                Vector2.Zero, 0f,
+                new Color(180, 180, 180, 255)
+            );
+        }
+
+        private static void DrawTitle()
+        {
+            const string title = "Space colony: Beyond the Void";
+
+            Vector2 size = Raylib.MeasureTextEx(
+                Assets.Assets.FontLarge, title,
+                Assets.Assets.FontLargeSize, 1
+            );
+
+            float fx = (Game.ScreenWidth - size.X) / 2f;
+            int x = (int)MathF.Round(fx);
+            int y = 160;
+
+            Raylib.DrawTextEx(
+                Assets.Assets.FontLarge, title,
+                new Vector2(x, y),
+                Assets.Assets.FontLargeSize, 1, Color.White
+            );
+        }
+
+        private static void DrawVersion()
+        {
+            const string ver = "v0.1";
+
+            Vector2 size = Raylib.MeasureTextEx(
+                Assets.Assets.FontMedium, ver, 16, 1
+            );
+
+            float fx = Game.ScreenWidth - size.X - 12;
+            float fy = Game.ScreenHeight - size.Y - 10;
+
+            int x = (int)MathF.Round(fx);
+            int y = (int)MathF.Round(fy);
+
+            Raylib.DrawTextEx(
+                Assets.Assets.FontMedium, ver,
+                new Vector2(x, y),
+                16, 1, Color.Green
+            );
+        }
+    }
+}

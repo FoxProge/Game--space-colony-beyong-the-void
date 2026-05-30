@@ -52,7 +52,7 @@ namespace Space_colony_game.Screens
         protected override int[] WinCondition { get; set; } = [250, 250, 150];
 
         /// <summary>День, при достижении которого наступает поражение.</summary>
-        protected override int LoseCondition { get; set; } = 150;
+        protected override int LoseCondition { get; set; } = 100;
 
         /// <summary>
         /// Создаёт экран уровня.
@@ -255,7 +255,7 @@ namespace Space_colony_game.Screens
                 Assets.Assets.FontLargeSize);
 
             DrawPauseText(
-                "ESC - продолжить",
+                "BACKSPACE - продолжить",
                 20,
                 Assets.Assets.FontMediumSize);
 

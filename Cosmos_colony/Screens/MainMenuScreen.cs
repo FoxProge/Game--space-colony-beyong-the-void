@@ -123,7 +123,7 @@ namespace Space_colony_game.Screens
         /// <summary>Рисует версию игры в правом нижнем углу экрана.</summary>
         private static void DrawVersion()
         {
-            const string ver = "v0.1";
+            const string ver = "v0.2";
 
             Vector2 size = Raylib.MeasureTextEx(
                 Assets.Assets.FontMedium, ver, 16, 1

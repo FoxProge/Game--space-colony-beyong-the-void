@@ -84,9 +84,9 @@ namespace Space_colony_game.Screens
             if (btnStart_.IsLMB_Pressed())
             {
                 if (level_1_.IsSelected)
-                    screenManager_.GoTo(new LevelOne(screenManager_, 0));
+                    screenManager_.GoTo(new IntroLevelOne(screenManager_));
                 else if (level_2_.IsSelected) 
-                    screenManager_.GoTo(new LevelTwo(screenManager_, 2));
+                    screenManager_.GoTo(new IntroLevelTwo(screenManager_));
             }
         }
 

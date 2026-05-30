@@ -16,7 +16,7 @@ namespace Space_colony_game.Assets
         /// <summary>Крупный UI шрифт.</summary>
         public static Font FontLarge { get; private set; }
 
-        public static int FontSmallSize = 14;
+        public static int FontSmallSize = 16;
         public static int FontMediumSize = 24;
         public static int FontLargeSize = 64;
 
